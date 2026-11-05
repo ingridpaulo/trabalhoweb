@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#24152c">
+  <meta name="description" content="Um grimório digital com fichas das monstrinhas de Monster High.">
+  <title>Monster High — MonsterPedia</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap');
+
+    :root {
+      --ink: #26182d;
+      --muted: #796b80;
+      --plum: #43264d;
+      --pink: #f5a9c9;
+      --pink-light: #ffe4ef;
+      --lilac: #d9c8f4;
+      --cream: #fff9f6;
+      --line: #eadce8;
+      --shadow: 0 16px 40px rgba(57, 30, 61, .10);
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      font-family: "DM Sans", sans-serif;
+      background:
+        radial-gradient(circle at 8% 8%, rgba(245,169,201,.28), transparent 24rem),
+        radial-gradient(circle at 92% 28%, rgba(217,200,244,.38), transparent 25rem),
+        #fff9fc;
+    }
+    a { color: inherit; }
+    button, input, select { font: inherit; }
+
+    .skip-link {
+      position: absolute; left: -999px; top: 1rem; z-index: 10;
+      padding: .8rem 1rem; background: white; border-radius: 10px;
+    }
+    .skip-link:focus { left: 1rem; }
+
+    .site-header {
+      position: relative;
+      overflow: hidden;
+      padding: 2.2rem 1.25rem 3.6rem;
+      color: #fff8fd;
+      text-align: center;
+      background: linear-gradient(130deg, #24152c, #43264d 58%, #70466f);
+      border-bottom: 5px solid var(--pink);
+    }
+    .site-header::before, .site-header::after {
+      content: "✦"; position: absolute; color: rgba(255,255,255,.25);
+      font-size: 5rem; top: 1rem;
+    }
+    .site-header::before { left: 7%; transform: rotate(-15deg); }
+    .site-header::after { right: 8%; top: 3rem; font-size: 3.5rem; }
+    .eyebrow {
+      margin: 0 0 .8rem; color: #f7bfd7; font-size: .72rem;
+      font-weight: 700; letter-spacing: .28em; text-transform: uppercase;
+    }
+    h1 {
+      margin: 0; font-family: "Cinzel Decorative", Georgia, serif;
+      font-size: clamp(2.2rem, 7vw, 4.8rem); line-height: 1.12;
+      letter-spacing: .025em;
+    }
+    h1 span { color: #ffb9d6; }
+    .subtitle {
+      max-width: 590px; margin: 1rem auto 0; color: #f2e5f1;
+      font-size: clamp(.9rem, 2vw, 1.05rem); line-height: 1.7;
+    }
+    .header-stamp {
+      display: inline-block; margin-top: 1.35rem; padding: .48rem .9rem;
+      border: 1px solid rgba(255,255,255,.35); border-radius: 99px;
+      color: #ffe1ed; font-size: .7rem; letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+
+    .main-nav {
+      display: flex; justify-content: center; flex-wrap: wrap; gap: .55rem;
+      padding: .85rem 1rem; background: rgba(255,255,255,.82);
+      border-bottom: 1px solid var(--line); backdrop-filter: blur(12px);
+    }
+    .main-nav a {
+      padding: .55rem .9rem; text-decoration: none; border-radius: 99px;
+      color: var(--plum); font-size: .82rem; font-weight: 700;
+      transition: background .2s, transform .2s;
+    }
+    .main-nav a:hover, .main-nav a:focus-visible {
+      background: var(--pink-light); transform: translateY(-2px);
+      outline: 2px solid transparent;
+    }
+
+    main { width: min(1120px, calc(100% - 2rem)); margin: auto; }
+    .intro {
+      display: grid; grid-template-columns: 1.5fr 1fr; gap: 1.5rem;
+      align-items: center; padding: 3rem 0 2rem;
+    }
+    .section-kicker {
+      margin: 0 0 .45rem; color: #a34e7b; font-size: .7rem;
+      font-weight: 700; letter-spacing: .2em; text-transform: uppercase;
+    }
+    h2, h3 { font-family: "Playfair Display", Georgia, serif; }
+    .intro h2 { margin: 0 0 .7rem; font-size: clamp(1.8rem, 4vw, 2.7rem); }
+    .intro p:not(.section-kicker) { max-width: 650px; margin: 0; color: var(--muted); line-height: 1.8; }
+    .quote-card {
+      padding: 1.2rem 1.35rem; background: rgba(255,255,255,.8);
+      border: 1px solid var(--line); border-radius: 18px; box-shadow: var(--shadow);
+      font-family: "Playfair Display", Georgia, serif; font-style: italic;
+      line-height: 1.6; color: var(--plum);
+    }
+    .quote-card small {
+      display: block; margin-top: .65rem; font-family: "DM Sans", sans-serif;
+      font-style: normal; color: #a34e7b; font-size: .68rem;
+      letter-spacing: .13em; text-transform: uppercase;
+    }
+
+    .catalogue { padding: 1rem 0 4rem; }
+    .catalogue-heading {
+      display: flex; justify-content: space-between; align-items: end;
+      gap: 1rem; margin-bottom: 1.2rem;
+    }
+    .catalogue-heading h2 { margin: 0; font-size: 2rem; }
+    .count {
+      padding: .45rem .75rem; background: var(--pink-light);
+      color: #8e3f69; border-radius: 99px; font-size: .75rem; font-weight: 700;
+      white-space: nowrap;
+    }
+    .controls {
+      display: grid; grid-template-columns: minmax(180px, 1fr) 220px;
+      gap: .75rem; margin-bottom: 1.4rem;
+    }
+    .search-wrap { position: relative; }
+    .search-wrap span {
+      position: absolute; left: 1rem; top: 50%; transform: translateY(-50%);
+      color: #9b7290; pointer-events: none;
+    }
+    .controls input, .controls select {
+      width: 100%; min-height: 48px; padding: .8rem 1rem;
+      color: var(--ink); background: white; border: 1px solid var(--line);
+      border-radius: 13px; outline: none;
+    }
+    .controls input { padding-left: 2.8rem; }
+    .controls input:focus, .controls select:focus {
+      border-color: #c77ba4; box-shadow: 0 0 0 3px rgba(245,169,201,.25);
+    }
+
+    .monster-grid {
+      display: grid; grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 1rem;
+    }
+    .monster-card {
+      position: relative; display: flex; flex-direction: column; min-height: 300px;
+      overflow: hidden; padding: 1.1rem; background: rgba(255,255,255,.92);
+      border: 1px solid var(--line); border-radius: 20px;
+      box-shadow: 0 8px 25px rgba(57,30,61,.06);
+      transition: transform .22s, box-shadow .22s, border-color .22s;
+    }
+    .monster-card:hover {
+      transform: translateY(-5px); box-shadow: var(--shadow); border-color: #e6a8c7;
+    }
+    .card-top { display: flex; align-items: start; justify-content: space-between; gap: .5rem; }
+    .avatar {
+      display: grid; place-items: center; width: 76px; height: 76px;
+      border-radius: 22px; font-size: 2.5rem;
+      background: var(--avatar-bg, var(--pink-light));
+      border: 1px solid rgba(75,40,80,.08);
+    }
+    .monster-number { color: #b39bad; font-size: .68rem; letter-spacing: .12em; }
+    .species {
+      display: inline-flex; align-self: flex-start; margin-top: 1rem;
+      padding: .35rem .65rem; border-radius: 99px; background: #f6edf7;
+      color: #80517f; font-size: .68rem; font-weight: 700;
+    }
+    .monster-card h3 { margin: .65rem 0 .25rem; font-size: 1.35rem; }
+    .tagline { margin: 0; color: var(--muted); font-size: .82rem; line-height: 1.5; }
+    .card-bottom {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: .5rem; margin-top: auto; padding-top: 1.15rem;
+    }
+    .motto { color: #a34e7b; font-size: .72rem; font-style: italic; }
+    .details-button {
+      border: 0; border-radius: 99px; padding: .58rem .85rem;
+      background: var(--plum); color: white; font-size: .72rem;
+      font-weight: 700; cursor: pointer; transition: background .2s;
+    }
+    .details-button:hover { background: #8e4c78; }
+    .details-button:focus-visible, .close-button:focus-visible {
+      outline: 3px solid #e6a8c7; outline-offset: 3px;
+    }
+    .empty-state {
+      grid-column: 1 / -1; padding: 3rem 1rem; text-align: center;
+      color: var(--muted); background: white; border: 1px dashed #d9bfd3;
+      border-radius: 18px;
+    }
+
+    .about {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;
+      padding: 0 0 4rem;
+    }
+    .info-panel {
+      padding: 1.4rem; background: #fff;
+      border: 1px solid var(--line); border-radius: 18px;
+    }
+    .info-panel h2 { margin: 0 0 .6rem; font-size: 1.4rem; }
+    .info-panel p, .info-panel li { color: var(--muted); font-size: .88rem; line-height: 1.75; }
+    .info-panel ul { padding-left: 1.1rem; margin-bottom: 0; }
+
+    .site-footer {
+      padding: 1.8rem 1rem; text-align: center; color: #e9dce9;
+      background: #24152c; font-size: .78rem; line-height: 1.7;
+    }
+    .site-footer strong { color: #ffb9d6; }
+
+    dialog {
+      width: min(500px, calc(100% - 2rem)); padding: 0; color: var(--ink);
+      border: 1px solid var(--line); border-radius: 22px;
+      box-shadow: 0 25px 90px rgba(22,10,28,.35);
+    }
+    dialog::backdrop { background: rgba(27,13,33,.65); backdrop-filter: blur(5px); }
+    .dialog-content { padding: 1.5rem; }
+    .dialog-top { display: flex; justify-content: space-between; align-items: start; gap: 1rem; }
+    .dialog-avatar {
+      display: grid; place-items: center; width: 88px; height: 88px;
+      border-radius: 25px; background: var(--pink-light); font-size: 3rem;
+    }
+    .close-button {
+      width: 36px; height: 36px; border: 0; border-radius: 50%;
+      background: #f7edf5; color: var(--plum); font-size: 1.2rem; cursor: pointer;
+    }
+    .dialog-content h2 { margin: 1rem 0 .2rem; font-size: 1.8rem; }
+    .dialog-content p { color: var(--muted); line-height: 1.7; font-size: .9rem; }
+    .detail-list { display: grid; grid-template-columns: 1fr 1fr; gap: .7rem; margin-top: 1rem; }
+    .detail-item { padding: .8rem; background: #fff5fa; border-radius: 12px; }
+    .detail-item strong {
+      display: block; margin-bottom: .25rem; color: #a34e7b;
+      font-size: .65rem; letter-spacing: .1em; text-transform: uppercase;
+    }
+    .detail-item span { font-size: .82rem; line-height: 1.4; }
+
+    @media (max-width: 800px) {
+      .monster-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .intro { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 540px) {
+      .monster-grid { grid-template-columns: 1fr; }
+      .controls { grid-template-columns: 1fr; }
+      .about { grid-template-columns: 1fr; }
+      .catalogue-heading { align-items: start; flex-direction: column; }
+      .site-header { padding-bottom: 2.8rem; }
+      .site-header::before { left: -1rem; }
+      .site-header::after { right: -.5rem; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; transition: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
+
+  <header class="site-header" id="inicio">
+    <p class="eyebrow">O arquivo secreto de Monster High</p>
+    <h1>Monster<span>Pedia</span></h1>
+    <p class="subtitle">Um guia nada normal sobre as criaturas mais estilosas dos corredores. Entre por sua conta e risco — e pelo seu próprio estilo.</p>
+    <span class="header-stamp">☾ Edição especial · Desde 2010 ☽</span>
+  </header>
+
+  <nav class="main-nav" aria-label="Navegação principal">
+    <a href="#inicio">Início</a>
+    <a href="#catalogo">Monstrinhas</a>
+    <a href="#sobre">Sobre o arquivo</a>
+  </nav>
+
+  <main id="conteudo">
+    <section class="intro" aria-labelledby="intro-title">
+      <div>
+        <p class="section-kicker">Bem-vinda à escola</p>
+        <h2 id="intro-title">Toda criatura tem sua história.</h2>
+        <p>Conheça algumas das estudantes mais icônicas de Monster High. Descubra suas origens, habilidades e personalidades nesta enciclopédia monstruosamente especial.</p>
+      </div>
+      <blockquote class="quote-card">
+        “Ser diferente não é defeito. É o que faz você ser monstruosamente única.”
+        <small>— Regra número 1 de Monster High</small>
+      </blockquote>
+    </section>
+
+    <section class="catalogue" id="catalogo" aria-labelledby="catalogue-title">
+      <div class="catalogue-heading">
+        <div>
+          <p class="section-kicker">O catálogo</p>
+          <h2 id="catalogue-title">Encontre sua monstrinha</h2>
+        </div>
+        <span class="count" id="result-count" aria-live="polite">12 monstrinhas</span>
+      </div>
+
+      <form class="controls" role="search" onsubmit="return false">
+        <label class="search-wrap">
+          <span aria-hidden="true">⌕</span>
+          <input id="search" type="search" placeholder="Buscar por nome ou personalidade..." aria-label="Buscar monstrinha">
+        </label>
+        <label>
+          <span class="skip-link">Filtrar por espécie</span>
+          <select id="species-filter" aria-label="Filtrar por espécie">
+            <option value="all">Todas as espécies</option>
+            <option value="Vampira">Vampiras</option>
+            <option value="Monstro de Frankenstein">Monstros de Frankenstein</option>
+            <option value="Lobisomem">Lobisomens</option>
+            <option value="Monstro marinho">Monstros marinhos</option>
+            <option value="Múmia">Múmias</option>
+            <option value="Zumbi">Zumbis</option>
+            <option value="Fantasma">Fantasmas</option>
+            <option value="Criatura do gelo">Criaturas do gelo</option>
+            <option value="Górgona">Górgonas</option>
+            <option value="Homem-gato">Homens-gato</option>
+            <option value="Criatura do pântano">Criaturas do pântano</option>
+            <option value="Bicho-papão">Bichos-papão</option>
+          </select>
+        </label>
+      </form>
+
+      <div class="monster-grid" id="monster-grid">
+        <article class="monster-card" data-name="draculaura" data-species="Vampira" data-search="romântica gentil otimista vampira">
+          <div class="card-top"><div class="avatar" style="--avatar-bg:#ffe0ed">🦇</div><span class="monster-number">Nº 001</span></div>
+          <span class="species">Vampira</span><h3>Draculaura</h3><p class="tagline">Romântica, doce e cheia de atitude.</p>
+          <div class="card-bottom"><span class="motto">♡ Doce como uma mordida</span><button class="details-button" data-id="draculaura">Ver ficha ↗</button></div>
+        </article>
+
+        <article class="monster-card" data-name="frankie stein" data-species="Monstro de Frankenstein" data-search="curiosa inteligente elétrica monstro frankenstein">
+          <div class="card-top"><div class="avatar" style="--avatar-bg:#e1f5ec">⚡</div><span class="monster-number">Nº 002</span></div>
+          <span class="species">Monstro de Frankenstein</span><h3>Frankie Stein</h3><p class="tagline">Curiosa, energética e descobrindo o mundo.</p>
+          <div class="card-bottom"><span class="motto">⚡ Costurada para brilhar</span><button class="details-button" data-id="frankie">Ver ficha ↗</button></div>
+        </article>
+
+        <article class="monster-card" data-name="clawdeen wolf" data-species="Lobisomem" data-search="confiante fashion criativa lobisomem">
+          <div class="card-top"><div class="avatar" style="--avatar-bg:#f5e4d4">🐺</div><span class="monster-number">Nº 003</span></div>
+          <span class="species">Lobisomem</span><h3>Clawdeen Wolf</h3><p class="tagline">Fashionista confiante com faro para tendências.</p>
+          <div class="card-bottom"><span class="motto">✦ Uivo de estilo</span><button class="details-button" data-id="clawdeen">Ver ficha ↗</button></div>
+        </article>
+
+        <article class="monster-card" data-name="lagoona blue" data-species="Monstro marinho" data-search="gentil esportiva oceano monstro marinho">
+          <div class="card-top"><div class="avatar" style="--avatar-bg:#dff4f5">🫧</div><span class="monster-number">Nº 004</span></div>
+          <span class="species">Monstro marinho</span><h3>Lagoona Blue</h3><p class="tagline">A alma do oceano, divertida e esportiva.</p>
+          <div class="card-bottom"><span class="motto">♡ Maré de boas energias</span><button class="details-button" data-id="lagoona">Ver ficha ↗</button></div>
+        </article>
+
+        <article class="monster-card" data-name="cleo de nile" data-species="Múmia" data-search="líder vaidosa poderosa múmia egito">
+          <div class="card-top"><div class="avatar" style="--avatar-bg:#fff0c9">𓂀</div><span class="monster-number">Nº 005</span></div>
+          <span class="species">Múmia</span><h3>Cleo de Nile</h3><p class="tagline">Realeza antiga com presença de milhões.</p>
+          <div class="card-bottom"><span class="motto">♛ Nasci para reinar</span><button class="details-button" data-id="cleo">Ver ficha ↗</button></div>
+        </article>
+
+        <article class="monster-card" data-name="ghoulia yelps" data-species="Zumbi" data-search="inteligente estudiosa videogame zumbi">
+          <div class="card-top"><div class="avatar" style="--avatar-bg:#e8e4fa">🧠</div><span class="monster-number">Nº 006</span></div>
+          <span class="species">Zumbi</span><h3>Ghoulia Yelps</h3><p class="tagline">A mente brilhante por trás dos mistérios.</p>
+          <div class="card-bottom"><span class="motto">✎ Conhecimento é poder</span><button class="details-button" data-id="ghoulia">Ver ficha ↗</button></div>
+        </article>
+
+        <article class="monster-card" data-name="spectra vondergeist" data-species="Fantasma" data-search="fofoqueira curiosa invisibilidade fantasma">
+          <div class="card-top"><div class="avatar" style="--avatar-bg:#e9e0fa">👻</div><span class="monster-number">Nº 007</span></div>
+          <span class="species">Fantasma</span><h3>Spectra Vondergeist</h3><p class="tagline">Sempre por dentro de tudo — literalmente.</p>
+          <div class="card-bottom"><span class="motto">☁ Notícias do além</span><button class="details-button" data-id="spectra">Ver ficha ↗</button></div>
+        </article>
+
+        <article class="monster-card" data-name="abbey bominable" data-species="Criatura do gelo" data-search="forte direta leal yeti gelo">
+          <div class="card-top"><div class="avatar" style="--avatar-bg:#e0f2fb">❄️</div><span class="monster-number">Nº 008</span></div>
+          <span class="species">Criatura do gelo</span><h3>Abbey Bominable</h3><p class="tagline">Coração leal e personalidade nada gelada.</p>
+          <div class="card-bottom"><span class="motto">❄️ Fria só por fora</span><button class="details-button" data-id="abbey">Ver ficha ↗</button></div>
+        </article>
+
+        <article class="monster-card" data-name="deuce gorgon" data-species="Górgona" data-search="tranquilo gentil cobras górgona">
+          <div class="card-top"><div class="avatar" style="--avatar-bg:#e3f0df">🐍</div><span class="monster-number">Nº 009</span></div>
+          <span class="species">Górgona</span><h3>Deuce Gorgon</h3><p class="tagline">Descolado, gentil e dono de um olhar poderoso.</p>
+          <div class="card-bottom"><span class="motto">◈ Olhar de milhões</span><button class="details-button" data-id="deuce">Ver ficha ↗</button></div>
+        </article>
+
+        <article class="monster-card" data-name="toralei stripe" data-species="Homem-gato" data-search="independente sarcástica competitiva felina">
+          <div class="card-top"><div class="avatar" style="--avatar-bg:#ffe8d9">🐱</div><span class="monster-number">Nº 010</span></div>
+          <span class="species">Homem-gato</span><h3>Toralei Stripe</h3><p class="tagline">Independente, afiada e impossível de ignorar.</p>
+          <div class="card-bottom"><span class="motto">✦ Minhas próprias regras</span><button class="details-button" data-id="toralei">Ver ficha ↗</button></div>
+        </article>
+
+        <article class="monster-card" data-name="venus mcflytrap" data-species="Criatura do pântano" data-search="natureza ativista determinada planta">
+          <div class="card-top"><div class="avatar" style="--avatar-bg:#e1f1dc">🌿</div><span class="monster-number">Nº 011</span></div>
+          <span class="species">Criatura do pântano</span><h3>Venus McFlytrap</h3><p class="tagline">Atitude forte e amor pela natureza.</p>
+          <div class="card-bottom"><span class="motto">♧ Floresça sem pedir licença</span><button class="details-button" data-id="venus">Ver ficha ↗</button></div>
+        </article>
+
+        <article class="monster-card" data-name="tw yla" data-species="Bicho-papão" data-search="sonhadora tímida sombras bicho papão">
+          <div class="card-top"><div class="avatar" style="--avatar-bg:#e9e2fa">🌙</div><span class="monster-number">Nº 012</span></div>
+          <span class="species">Bicho-papão</span><h3>Twyla</h3><p class="tagline">Sonhadora, reservada e amiga das sombras.</p>
+          <div class="card-bottom"><span class="motto">☾ Brilho no escuro</span><button class="details-button" data-id="twyla">Ver ficha ↗</button></div>
+        </article>
+      </div>
+    </section>
+
+    <section class="about" id="sobre" aria-label="Informações sobre o projeto">
+      <article class="info-panel">
+        <p class="section-kicker">Sobre o projeto</p>
+        <h2>Um arquivo monstruoso</h2>
+        <p>A MonsterPedia é uma página temática inspirada no universo de Monster High. O catálogo organiza informações das personagens em fichas para facilitar a exploração e a descoberta.</p>
+      </article>
+      <aside class="info-panel">
+        <p class="section-kicker">Como explorar</p>
+        <h2>Seu guia de sobrevivência</h2>
+        <ul>
+          <li>Pesquise uma personagem pelo nome.</li>
+          <li>Filtre o catálogo pela espécie.</li>
+          <li>Abra uma ficha para descobrir mais detalhes.</li>
+          <li>Use o menu para navegar pelas seções.</li>
+        </ul>
+      </aside>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <strong>MonsterPedia</strong> · Um projeto de fã inspirado em Monster High.<br>
+    Monster High e suas personagens pertencem aos seus respectivos titulares. Projeto sem vínculo oficial.
+  </footer>
+
+  <dialog id="monster-dialog" aria-labelledby="dialog-name">
+    <div class="dialog-content">
+      <div class="dialog-top">
+        <div class="dialog-avatar" id="dialog-avatar" aria-hidden="true">🦇</div>
+        <button class="close-button" id="close-dialog" aria-label="Fechar ficha">×</button>
+      </div>
+      <span class="species" id="dialog-species">Espécie</span>
+      <h2 id="dialog-name">Nome da personagem</h2>
+      <p id="dialog-description"></p>
+      <div class="detail-list">
+        <div class="detail-item"><strong>Personalidade</strong><span id="dialog-personality"></span></div>
+        <div class="detail-item"><strong>Habilidade</strong><span id="dialog-power"></span></div>
+        <div class="detail-item"><strong>Estilo</strong><span id="dialog-style"></span></div>
+        <div class="detail-item"><strong>Curiosidade</strong><span id="dialog-funfact"></span></div>
+      </div>
+    </div>
+  </dialog>
+
+  <script>
+    const monsters = {
+      draculaura: {
+        name: "Draculaura", emoji: "🦇", species: "Vampira",
+        description: "Filha do Drácula, Draculaura é conhecida por seu jeito carinhoso, seu romantismo e seu estilo cheio de rosa e preto.",
+        personality: "Gentil, otimista e romântica",
+        power: "Voo e habilidades vampíricas",
+        style: "Rosa, preto e visual gótico fofo",
+        funfact: "Ela é vegetariana e não consome sangue."
+      },
+      frankie: {
+        name: "Frankie Stein", emoji: "⚡", species: "Monstro de Frankenstein",
+        description: "Frankie foi criada a partir de diferentes partes e está sempre aprendendo sobre o mundo e sobre si mesma.",
+        personality: "Curiosa, amigável e determinada",
+        power: "Energia elétrica",
+        style: "Xadrez, costuras e detalhes coloridos",
+        funfact: "Suas partes podem se soltar e ela consegue recolocá-las."
+      },
+      clawdeen: {
+        name: "Clawdeen Wolf", emoji: "🐺", species: "Lobisomem",
+        description: "Clawdeen é apaixonada por moda e tem uma personalidade marcante. Ela valoriza sua família e seus amigos.",
+        personality: "Confiante, criativa e leal",
+        power: "Transformação e sentidos aguçados",
+        style: "Estampas ousadas e acessórios dourados",
+        funfact: "Seu amor pela moda também aparece em seus sonhos profissionais."
+      },
+      lagoona: {
+        name: "Lagoona Blue", emoji: "🫧", species: "Monstro marinho",
+        description: "Vinda do mundo aquático, Lagoona ama nadar e costuma levar leveza e energia para o grupo.",
+        personality: "Gentil, esportiva e divertida",
+        power: "Habilidades aquáticas e natação",
+        style: "Tons de azul, rosa e referências do oceano",
+        funfact: "A água é parte essencial de sua identidade."
+      },
+      cleo: {
+        name: "Cleo de Nile", emoji: "𓂀", species: "Múmia",
+        description: "Cleo vem de uma família real do Egito antigo. Ela gosta de estar no centro das atenções, mas também aprende sobre amizade e confiança.",
+        personality: "Líder, vaidosa e determinada",
+        power: "Faixas de múmia e longevidade",
+        style: "Dourado, azul e referências egípcias",
+        funfact: "Sua família tem uma história milenar."
+      },
+      ghoulia: {
+        name: "Ghoulia Yelps", emoji: "🧠", species: "Zumbi",
+        description: "Ghoulia é uma das estudantes mais inteligentes de Monster High e adora livros, jogos e desafios mentais.",
+        personality: "Inteligente, tímida e observadora",
+        power: "Conhecimento e raciocínio estratégico",
+        style: "Óculos, peças retrô e tons de azul",
+        funfact: "Ela se comunica principalmente por gemidos de zumbi."
+      },
+      spectra: {
+        name: "Spectra Vondergeist", emoji: "👻", species: "Fantasma",
+        description: "Spectra é uma fantasma que adora descobrir segredos e compartilhar notícias pelos corredores da escola.",
+        personality: "Curiosa, comunicativa e independente",
+        power: "Flutuar e atravessar objetos",
+        style: "Roxo, tecidos leves e correntes",
+        funfact: "Ela consegue atravessar paredes."
+      },
+      abbey: {
+        name: "Abbey Bominable", emoji: "❄️", species: "Criatura do gelo",
+        description: "Abbey veio das montanhas geladas e é conhecida por sua força, sinceridade e lealdade.",
+        personality: "Direta, forte e leal",
+        power: "Gelo e resistência ao frio",
+        style: "Pelos, cristais e tons frios",
+        funfact: "Ela tem uma personalidade tão marcante quanto sua força."
+      },
+      deuce: {
+        name: "Deuce Gorgon", emoji: "🐍", species: "Górgona",
+        description: "Filho de Medusa, Deuce é tranquilo e gentil. Ele usa óculos para controlar seu olhar petrificante.",
+        personality: "Descolado, gentil e paciente",
+        power: "Olhar que transforma em pedra",
+        style: "Óculos escuros, verde e referências de cobra",
+        funfact: "Suas cobras são parte de seu visual característico."
+      },
+      toralei: {
+        name: "Toralei Stripe", emoji: "🐱", species: "Homem-gato",
+        description: "Toralei é uma felina independente e competitiva, com respostas afiadas e muita autoconfiança.",
+        personality: "Sarcástica, esperta e competitiva",
+        power: "Agilidade e reflexos felinos",
+        style: "Listras, jaqueta e detalhes alaranjados",
+        funfact: "Seu jeito provocador faz dela uma personagem imprevisível."
+      },
+      venus: {
+        name: "Venus McFlytrap", emoji: "🌿", species: "Criatura do pântano",
+        description: "Venus é ligada à natureza e defende causas ambientais. Sua personalidade é tão vibrante quanto seu visual.",
+        personality: "Determinada, expressiva e apaixonada",
+        power: "Controle de plantas e vinhas",
+        style: "Verde, rosa e referências botânicas",
+        funfact: "Ela usa sua voz para incentivar os outros a cuidar do planeta."
+      },
+      twyla: {
+        name: "Twyla", emoji: "🌙", species: "Bicho-papão",
+        description: "Twyla é uma personagem reservada que prefere ambientes tranquilos e tem uma ligação especial com o mundo dos sonhos.",
+        personality: "Doce, tímida e imaginativa",
+        power: "Manipular sombras e se esconder nelas",
+        style: "Lilás, azul e tons suaves",
+        funfact: "Ela é associada aos sonhos e aos pesadelos."
+      }
+    };
+
+    const searchInput = document.querySelector("#search");
+    const speciesFilter = document.querySelector("#species-filter");
+    const cards = [...document.querySelectorAll(".monster-card")];
+    const count = document.querySelector("#result-count");
+    const dialog = document.querySelector("#monster-dialog");
+
+    function filterCards() {
+      const term = searchInput.value.trim().toLocaleLowerCase("pt-BR");
+      const species = speciesFilter.value;
+      let visible = 0;
+
+      cards.forEach(card => {
+        const searchable = `${card.dataset.name} ${card.dataset.search}`.toLocaleLowerCase("pt-BR");
+        const matchesText = searchable.includes(term);
+        const matchesSpecies = species === "all" || card.dataset.species === species;
+        const show = matchesText && matchesSpecies;
+        card.hidden = !show;
+        if (show) visible++;
+      });
+
+      count.textContent = `${visible} ${visible === 1 ? "resultado" : "resultados"}`;
+      let empty = document.querySelector(".empty-state");
+      if (!visible && !empty) {
+        empty = document.createElement("p");
+        empty.className = "empty-state";
+        empty.textContent = "Nenhuma monstrinha encontrada. Tente outra busca! 🕸️";
+        document.querySelector("#monster-grid").append(empty);
+      } else if (visible && empty) {
+        empty.remove();
+      }
+    }
+
+    function openMonster(id) {
+      const monster = monsters[id];
+      if (!monster) return;
+      document.querySelector("#dialog-avatar").textContent = monster.emoji;
+      document.querySelector("#dialog-species").textContent = monster.species;
+      document.querySelector("#dialog-name").textContent = monster.name;
+      document.querySelector("#dialog-description").textContent = monster.description;
+      document.querySelector("#dialog-personality").textContent = monster.personality;
+      document.querySelector("#dialog-power").textContent = monster.power;
+      document.querySelector("#dialog-style").textContent = monster.style;
+      document.querySelector("#dialog-funfact").textContent = monster.funfact;
+      dialog.showModal();
+    }
+
+    searchInput.addEventListener("input", filterCards);
+    speciesFilter.addEventListener("change", filterCards);
+    document.querySelector("#monster-grid").addEventListener("click", event => {
+      const button = event.target.closest(".details-button");
+      if (button) openMonster(button.dataset.id);
+    });
+    document.querySelector("#close-dialog").addEventListener("click", () => dialog.close());
+    dialog.addEventListener("click", event => {
+      if (event.target === dialog) dialog.close();
+    });
+  </script>
+</body>
+</html>
